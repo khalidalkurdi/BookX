@@ -1,0 +1,108 @@
+﻿@model ProductVM
+<div class="card border-0 shadow my-5">
+    <div class="card-header bg-gradient bg-secondary py-3 ms-0">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class=" text-white py-2">@(Model.product.Id!=0?"Update":"Create") Product</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <form method="post" class="row" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-10">
+                    <div class="border p-3">
+                        <input asp-for="product.Id" hidden />
+                        <input asp-for="product.ImageUrl" hidden />
+                        <div class=" form-floating py-3 col-12">
+                            <label asp-for="product.Title" class="ms-0"></label>
+                            <input asp-for="product.Title" class="form-control border-0 shadow" />
+                            <span class="text-danger" asp-validation-for="product.Title"></span>
+                        </div>
+                        <div class="py-3 col-12">
+                            <label asp-for="product.Description" class="ms-0 text-muted "></label>
+                            <textarea asp-for="product.Description" class="form-control border-0 shadow"></textarea>
+                        </div>
+                        <div class="form-floating py-3 col-12">
+                            <label asp-for="product.ISBN" class="ms-0 "></label>
+                            <input asp-for="product.ISBN" class="form-control border-0 shadow" />
+                            <span class="text-danger" asp-validation-for="product.ISBN"></span>
+                        </div>
+                        <div class="form-floating py-3 col-12">
+                            <label asp-for="product.Author" class="ms-0 "></label>
+                            <input asp-for="product.Author" class="form-control border-0 shadow" />
+                            <span class="text-danger" asp-validation-for="product.Author"></span>
+                        </div>
+                        <div class="form-floating py-3 col-12">
+                            <label asp-for="product.ListPrice" class="ms-0 "></label>
+                            <input asp-for="product.ListPrice" class="form-control border-0 shadow" />
+                            <span class="text-danger" asp-validation-for="product.ListPrice"></span>
+                        </div>
+                        <div class="form-floating py-3 col-12">
+                            <label asp-for="product.Price" class="ms-0 "></label>
+                            <input asp-for="product.Price" class="form-control border-0 shadow" />
+                            <span class="text-danger" asp-validation-for="product.Price"></span>
+                        </div>
+                        <div class="form-floating py-3 col-12">
+                            <label asp-for="product.Price50" class="ms-0 "></label>
+                            <input asp-for="product.Price50" class="form-control border-0 shadow" />
+                            <span class="text-danger" asp-validation-for="product.Price50"></span>
+                        </div>
+                        <div class="form-floating py-3 col-12">
+                            <label asp-for="product.Price100" class="ms-0 "></label>
+                            <input asp-for="product.Price100" class="form-control border-0 shadow" />
+                            <span class="text-danger" asp-validation-for="product.Price100"></span>
+                        </div>
+                        <div class="form-floating py-3 col-12">
+                            <label asp-for="product.CategoryId" class="ms-0 "></label>
+                            <select asp-for="product.CategoryId" asp-items="@Model.CategoryList" class=" form-select border-0 shadow">
+                                <option disabled selected>--Select Category--</option>
+                            </select>
+                        </div>
+                        <div class="form-floating py-3 col-12">
+                            <label asp-for="product.ImageUrl" class="ms-0 "></label>
+                            <input type="file" name="file" class="form-control border-0 shadow" />
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-6 col-md-3">
+                                @if (Model.product.Id != 0)
+                                {
+                                    <input type="submit" value="Update Product" class="btn btn-primary form-control" />
+                                }
+                                else
+                                {
+                                    <input type="submit" value="Create Product" class="btn btn-primary form-control" />
+                                }
+
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a class="btn btn-outline-secondary form-control" asp-area="Admin" asp-controller="Product" asp-action="Index">Back to home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <img src="@Model.product.ImageUrl" width="100%"style="border:1px solid #bbb9b9; border-radius:5px" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial"></partial>
+    }
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: [
+                
+                 'charmap', 'codesample', 'emoticons', 'lists', 'visualblocks', 'wordcount',
+                ],
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent',
+             });
+    </script>
+}

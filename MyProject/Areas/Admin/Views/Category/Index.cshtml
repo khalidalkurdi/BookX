@@ -1,0 +1,42 @@
+﻿
+@model List<Category>
+<div class="card mt-4 border-0 shadow">
+    <div class="card-header bg-gradient bg-secondary py-3 ms-0">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class=" text-white py-2"> Category List</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div class="row py-3">
+            <div class="col-12 text-end">
+                <a class="btn btn-primary" asp-controller="Category" asp-action="Create"> <i class="bi bi-plus-circle"></i> Add New Category </a>
+            </div>
+        </div>
+        <table class=" table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Display Order</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var category in Model)
+                {
+                    <tr>
+                        <td>@category.Name</td>
+                        <td>@category.Displayorder</td>
+                        <td>
+                            <div class="w-75 btn-group ">
+                                <a class="btn btn-danger" asp-controller="Category" asp-action="Delete" asp-route-id="@category.Id"><i class="bi bi-trash"></i></a>
+                                <a class="btn btn-primary" asp-controller="Category" asp-action="Edit" asp-route-id="@category.Id"><i class="bi bi-pencil-square"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
