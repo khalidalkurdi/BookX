@@ -1,15 +1,15 @@
 ﻿using DataAccess.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Models.ViewModels;
 using MyProject.Models;
-using NuGet.Packaging.Signing;
-using System.Xml.Serialization;
-
+using Utility;
 
 namespace MyProject.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitofwork;
@@ -26,15 +26,16 @@ namespace MyProject.Areas.Admin.Controllers
         } 
         public IActionResult UpSert(int? id)
         {
-            
-            ProductVM productVM = new ProductVM() {
+
+            ProductVM productVM = new ProductVM()
+            {
                 CategoryList = _unitofwork.Category.GetAll().Select(
                 u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString()
                 }),
-                product =new Product()
+                product = new Product()
             };
             
             if (id == null || id == 0)
@@ -55,8 +56,8 @@ namespace MyProject.Areas.Admin.Controllers
                 string wwwRoot = _webHostEnvironment.WebRootPath;
                 if (file != null)
                 {
-                    string productPath = Path.Combine(wwwRoot, @"images\product");
                     string fileName = Guid.NewGuid().ToString()+Path.GetExtension(file.FileName);
+                    string productPath = Path.Combine(wwwRoot, @"images\product");
                     //case -- update --
                     if (!string.IsNullOrEmpty(productVM.product.ImageUrl))
                     {//delet old image
@@ -74,8 +75,9 @@ namespace MyProject.Areas.Admin.Controllers
                 }//add
                  
 
-                if (productVM.product.Id !=null)
-                { _unitofwork.Product.Update(productVM.product);
+                if (productVM.product.Id !=null && productVM.product.Id != 0)
+                { 
+                    _unitofwork.Product.Update(productVM.product);
                     TempData["update"] = "Updated Successfuly. !";
                 }
                 else
@@ -87,34 +89,31 @@ namespace MyProject.Areas.Admin.Controllers
                 return RedirectToAction("Index");
             }
             return View(productVM);
+        }        
+        #region Api Call 
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            List<Product> list = _unitofwork.Product.GetAll("Category").ToList();
+            return Json(new { data = list});
         }
-        
+        [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            if (id == null || id == 0)
+            var productToBeDelete = _unitofwork.Product.Get(x => x.Id == id);
+            if (productToBeDelete == null)
             {
-                return NotFound();
+                return Json(new {success= false, message="Error while delete a prouct !"});
             }
-            var productfromdb = _unitofwork.Product.Get(x => x.Id == id);
-            if (productfromdb == null)
+            var oldImage = Path.Combine(_webHostEnvironment.WebRootPath, productToBeDelete.ImageUrl.TrimStart('\\'));
+            if (System.IO.Path.Exists(oldImage))
             {
-                return NotFound();
+                System.IO.File.Delete(oldImage);
             }
-            return View(productfromdb);
-        }
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePost(int? id)
-        {
-            var exist = _unitofwork.Product.Get(x => x.Id == id);
-            if (exist == null)
-            {
-                return NotFound(id);
-            }
-
-            _unitofwork.Product.Remove(exist);
+            _unitofwork.Product.Remove(productToBeDelete);
             _unitofwork.Save();
-            TempData["delete"] = "Done Deleted. !";
-            return RedirectToAction("Index");
+            return Json(new { success = true, message = "Delete Successfuly!" });
         }
+        #endregion
     }//end controller
 }

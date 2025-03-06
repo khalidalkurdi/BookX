@@ -1,11 +1,14 @@
 ﻿
 
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Models;
 using MyProject.Models;
 
 namespace DataAccess.Db
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -13,14 +16,51 @@ namespace DataAccess.Db
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
-
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Company> Companies { get; set; } 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Company>().HasData(
+                new Company
+                {
+                    Id = 1,
+                    Name = "Tech Solution",
+                    StreetAddress = "123 Tech St",
+                    City = "Jezaa",
+                    PostalCode = "12121",
+                    Country = "EGY",
+                    PhoneNumber = "6669990000"
+                },
+                new Company
+                {
+                    Id = 2,
+                    Name = "Vivid Books",
+                    StreetAddress = "999 Vid St",
+                    City = "Sham",
+                    PostalCode = "66666",
+                    Country = "SY",
+                    PhoneNumber = "7779990000"
+                },
+                new Company
+                {
+                    Id = 3,
+                    Name = "Readers Club",
+                    StreetAddress = "999 Main St",
+                    City = "Amman",
+                    PostalCode = "99999",
+                    Country = "JO",
+                    PhoneNumber = "1113335555"
+                }
+                );
+
             modelBuilder.Entity<Category>().HasData(
                 new Category { Id = 1, Name = "Action", Displayorder = 1 },
                 new Category { Id = 2, Name = "sciFi", Displayorder = 2 },
                 new Category { Id = 3, Name = "History", Displayorder = 3 }
                 );
+
             modelBuilder.Entity<Product>().HasData(
                 new Product
                 {

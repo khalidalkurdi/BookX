@@ -1,8 +1,10 @@
 ﻿
 using DataAccess.Repository;
 using DataAccess.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyProject.Models;
+using Utility;
 
 
 
@@ -10,6 +12,7 @@ using MyProject.Models;
 namespace MyProject.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles =SD.Role_Admin)]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitofwork;
@@ -45,12 +48,12 @@ namespace MyProject.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            var categoryfromdb = _unitofwork.Category.Get(x => x.Id == id);
-            if (categoryfromdb == null)
+            var Categoryfromdb = _unitofwork.Category.Get(x => x.Id == id);
+            if (Categoryfromdb == null)
             {
                 return NotFound();
             }
-            return View(categoryfromdb);
+            return View(Categoryfromdb);
         }
         [HttpPost]
         public IActionResult Edit(Category obj)
@@ -70,12 +73,12 @@ namespace MyProject.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            var categoryfromdb = _unitofwork.Category.Get(x => x.Id == id);
-            if (categoryfromdb == null)
+            var Categoryfromdb = _unitofwork.Category.Get(x => x.Id == id);
+            if (Categoryfromdb == null)
             {
                 return NotFound();
             }
-            return View(categoryfromdb);
+            return View(Categoryfromdb);
         }
         [HttpPost, ActionName("Delete")]
         public IActionResult DeletePost(int? id)

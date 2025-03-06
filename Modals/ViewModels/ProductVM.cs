@@ -1,9 +1,6 @@
-﻿
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MyProject.Models;
-
-
 namespace Models.ViewModels
 {
     public class ProductVM

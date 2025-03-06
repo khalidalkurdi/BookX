@@ -23,15 +23,15 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var category in Model)
+                @foreach (var Category in Model)
                 {
                     <tr>
-                        <td>@category.Name</td>
-                        <td>@category.Displayorder</td>
+                        <td>@Category.Name</td>
+                        <td>@Category.Displayorder</td>
                         <td>
                             <div class="w-75 btn-group ">
-                                <a class="btn btn-danger" asp-controller="Category" asp-action="Delete" asp-route-id="@category.Id"><i class="bi bi-trash"></i></a>
-                                <a class="btn btn-primary" asp-controller="Category" asp-action="Edit" asp-route-id="@category.Id"><i class="bi bi-pencil-square"></i></a>
+                                <a class="btn btn-danger" asp-controller="Category" asp-action="Delete" asp-route-id="@Category.Id"><i class="bi bi-trash"></i></a>
+                                <a class="btn btn-primary" asp-controller="Category" asp-action="Edit" asp-route-id="@Category.Id"><i class="bi bi-pencil-square"></i></a>
                             </div>
                         </td>
                     </tr>

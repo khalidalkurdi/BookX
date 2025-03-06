@@ -203,13 +203,13 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("MyProject.Models.Product", b =>
                 {
-                    b.HasOne("MyProject.Models.Category", "category")
+                    b.HasOne("MyProject.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("category");
+                    b.Navigation("Category");
                 });
 #pragma warning restore 612, 618
         }

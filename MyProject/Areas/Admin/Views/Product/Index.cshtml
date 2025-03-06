@@ -13,7 +13,7 @@
                 <a class="btn btn-primary" asp-controller="Product" asp-action="UpSert"> <i class="bi bi-plus-circle"></i> Add New Product </a>
             </div>
         </div>
-        <table class=" table table-bordered table-striped">
+        <table id="tabledata" class=" table table-bordered table-striped">
             <thead>
                 <tr>
                     
@@ -24,25 +24,10 @@
                     <th>Category</th>
                     <th></th>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var product in Model)
-                {
-                    <tr>
-                        <td>@product.Title</td>
-                        <td>@product.ISBN</td>
-                        <td>@product.Author</td>
-                        <td>@product.Price</td>
-                        <td>@product.Category.Name</td>
-                        <td>
-                            <div class="w-75 btn-group ">
-                                <a class="btn btn-danger" asp-area="Admin" asp-controller="Product" asp-action="Delete" asp-route-id="@product.Id"><i class="bi bi-trash"></i></a>
-                                <a class="btn btn-primary" asp-area="Admin" asp-controller="Product" asp-action="Upsert" asp-route-id="@product.Id"><i class="bi bi-pencil-square"></i></a>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
+            </thead>           
         </table>
     </div>
 </div>
+@section Scripts{
+    <script src="~/js/product.js"></script>
+}

@@ -20,7 +20,6 @@ namespace DataAccess.Repository
         public void Update(Product product)
         {
             var productfromdb=_db.Products.FirstOrDefault(p => p.Id == product.Id);
-            productfromdb.Id=product.Id;
             productfromdb.Title = product.Title;
             productfromdb.ISBN = product.ISBN;
             productfromdb.Description = product.Description;
