@@ -1,7 +1,11 @@
 using DataAccess.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Models;
 using MyProject.Models;
 using System.Diagnostics;
+using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace MyProject.Areas.Customer.Controllers
 {
     [Area("Customer")]
@@ -18,13 +22,42 @@ namespace MyProject.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Product> productList = _unitOfWork.Product.GetAll("Category");
+            IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category");
             return View(productList);
         }
+        [HttpGet]
         public IActionResult Details(int producdId)
         {
-            Product product = _unitOfWork.Product.Get(p=>p.Id==producdId,"Category");
-            return View(product);
+            var ShoppingCart = new ShoppingCart
+            {
+                product=_unitOfWork.Product.Get(p=>p.Id==producdId,"Category"),
+                ProductId=producdId
+
+            };
+            return View(ShoppingCart);
+        }
+        [HttpPost]
+        [Authorize]
+        public IActionResult Details(ShoppingCart cart)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            cart.UserID= userId;
+
+            var cartFromDb = _unitOfWork.ShoppingCart.Get(sh=>sh.ProductId==cart.ProductId && sh.UserID==userId);
+            if (cartFromDb != null)
+            {
+                cartFromDb.Count += cart.Count;
+                _unitOfWork.ShoppingCart.Update(cartFromDb);
+            }
+            else
+            {
+                _unitOfWork.ShoppingCart.Add(cart);
+            }
+            _unitOfWork.Save();
+
+            TempData["update"] = "Cart updated successfuly!";
+            return RedirectToAction("Index");
         }
 
         public IActionResult Privacy()

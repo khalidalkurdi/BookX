@@ -130,8 +130,8 @@ namespace MyProject.Areas.Identity.Pages.Account
         {
             if (! await _roleManager.RoleExistsAsync(SD.Role_Customer))
             {
+               await _roleManager.CreateAsync(new IdentityRole(SD.Role_Company));
                await _roleManager.CreateAsync(new IdentityRole(SD.Role_Customer));
-               await _roleManager.CreateAsync(new IdentityRole(SD.Role_Category));
                await _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin));
                await _roleManager.CreateAsync(new IdentityRole(SD.Role_Employee));
             }
@@ -175,8 +175,11 @@ namespace MyProject.Areas.Identity.Pages.Account
                 user.City=Input.City;
                 user.StreetAddress=Input.StreetAddress;
                 user.PostalCode=Input.PostalCode;
-                user.CompanyId = Input.CompanyId!=0?Input.CompanyId : null;
 
+                if (Input.Role == SD.Role_Company)
+                {
+                    user.CompanyId = Input.CompanyId;
+                }
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)

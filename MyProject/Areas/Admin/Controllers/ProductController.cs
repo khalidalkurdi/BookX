@@ -21,7 +21,7 @@ namespace MyProject.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            List<Product> list = _unitofwork.Product.GetAll("Category").ToList();
+            List<Product> list = _unitofwork.Product.GetAll(includeProperties: "Category").ToList();
             return View(list);
         } 
         public IActionResult UpSert(int? id)
@@ -94,7 +94,7 @@ namespace MyProject.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<Product> list = _unitofwork.Product.GetAll("Category").ToList();
+            List<Product> list = _unitofwork.Product.GetAll(includeProperties: "Category").ToList();
             return Json(new { data = list});
         }
         [HttpDelete]

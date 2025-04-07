@@ -10,8 +10,8 @@ namespace DataAccess.Repository
     public interface IRepository<T> where T : class
     {
         // Category
-        IEnumerable<T> GetAll(string? includeProperties = null);
-        T Get(Expression<Func<T, bool>> function, string? includeProperties = null);
+        IEnumerable<T> GetAll(Expression<Func<T, bool>>? fillter=null, string? includeProperties = null);
+        T Get( Expression<Func<T, bool>> function, string? includeProperties = null, bool traked=false );
         void Add(T entity);
 
         void Remove(T entity);
