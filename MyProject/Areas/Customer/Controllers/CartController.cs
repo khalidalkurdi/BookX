@@ -23,14 +23,29 @@ namespace MyProject.Areas.Customer.Controllers
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             
             ShoppingCartVM =new() { 
-                ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u=>u.UserID==userId,includeProperties: "product")
+                ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u=>u.UserID==userId,includeProperties: "product"),
+                orderHeader=new OrderHeader()
             };
+
+            ShoppingCartVM.orderHeader.user = _unitOfWork.ApplicationUser.Get(u=>u.Id==userId);
+
+            ShoppingCartVM.orderHeader.Name = ShoppingCartVM.orderHeader.user.Name;
+            ShoppingCartVM.orderHeader.StreetAddress = ShoppingCartVM.orderHeader.user.StreetAddress;
+            ShoppingCartVM.orderHeader.PhoneNumber = ShoppingCartVM.orderHeader.user.PhoneNumber;
+            ShoppingCartVM.orderHeader.Country = ShoppingCartVM.orderHeader.user.Country;
+            ShoppingCartVM.orderHeader.City = ShoppingCartVM.orderHeader.user.City;
+            ShoppingCartVM.orderHeader.PostalCode = ShoppingCartVM.orderHeader.user.PostalCode;
+
             foreach (var cart in ShoppingCartVM.ShoppingCartList)
             {
                 cart.CartPrice = GetPriceBasedOnQuantity(cart);
-                ShoppingCartVM.OrderTotal += (cart.Count * cart.CartPrice);
+                ShoppingCartVM.orderHeader.OrderTotal += (cart.Count * cart.CartPrice);
             }
             return View(ShoppingCartVM);
+        }
+        public IActionResult Summary()
+        {
+            return View();
         }
         public IActionResult plus(int Id)
         {
@@ -62,7 +77,7 @@ namespace MyProject.Areas.Customer.Controllers
             _unitOfWork.Save();
             return RedirectToAction("Index");
         }
-        public double GetPriceBasedOnQuantity(ShoppingCart Cart)
+        private double GetPriceBasedOnQuantity(ShoppingCart Cart)
         {
             if (Cart.Count<=50)
             {

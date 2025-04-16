@@ -15,15 +15,15 @@ namespace Models
         [Key]
         public int Id { get; set; }
         [ForeignKey("user")]
-        [ValidateNever]
         public string UserID { get; set; }
         [ForeignKey("product")]
-        [ValidateNever]
         public int ProductId { get; set; }
         [Range(1,1000,ErrorMessage ="please enter a value between 1 and 1000")]
         public int Count { get; set; }
 
+        [ValidateNever]
         public Product product { get; set; }
+        [ValidateNever]
         public ApplicationUser user { get; set; }
 
         [NotMapped]

@@ -2,17 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
 using DataAccess.UnitOfWork;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +14,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
 using Models;
 using Utility;
 
@@ -141,12 +134,12 @@ namespace MyProject.Areas.Identity.Pages.Account
             Input = new()
             {
                 //selectlist just contain  a name of role ...
-                RoleList = _roleManager.Roles.Select(i => i.Name).Select(i =>
+                RoleList = _roleManager.Roles.Select(i =>
                         new SelectListItem
                         {
                             // i= name from previos select
-                            Text = i,
-                            Value = i
+                            Text = i.Name,
+                            Value = i.Name
                         }
                 ),
                 CompanyList = _unitOfWork.Company.GetAll().Select(u=>
