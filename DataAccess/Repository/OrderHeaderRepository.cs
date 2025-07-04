@@ -22,5 +22,37 @@ namespace DataAccess.Repository
         {
             _db.orderHeaders.Update(entity);
         }
+
+        public void UpdateStatus(int id, string orderStatus, string? paymentStatus = null)
+        {
+            var orderFromDb = _db.orderHeaders.FirstOrDefault(o=>o.Id==id);
+            if (orderFromDb != null)
+            {
+                orderFromDb.OrderStatus = orderStatus;
+                if (!string.IsNullOrEmpty(paymentStatus))
+                {
+                    orderFromDb.PaymentStatus = paymentStatus;
+                }
+            }
+        }
+
+        public void UpdateStripePaymentId(int id, string sessionId, string pamentIntentId)
+        {
+            var orderFromDb = _db.orderHeaders.FirstOrDefault(o => o.Id == id);
+            if (orderFromDb != null)
+            {
+                if (!string.IsNullOrEmpty(sessionId))
+                {
+                    orderFromDb.SessionId = sessionId;
+                }
+                if (!string.IsNullOrEmpty(pamentIntentId))
+                {
+                    orderFromDb.PaymentIntentId = pamentIntentId;
+                    orderFromDb.OrderDate=DateTime.Now;
+                }
+            }
+        }
+
+        
     }
 }
