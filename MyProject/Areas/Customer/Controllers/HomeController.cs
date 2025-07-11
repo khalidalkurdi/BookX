@@ -5,6 +5,7 @@ using Models;
 using MyProject.Models;
 using System.Diagnostics;
 using System.Security.Claims;
+using Utility;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace MyProject.Areas.Customer.Controllers
 {
@@ -23,6 +24,18 @@ namespace MyProject.Areas.Customer.Controllers
         public IActionResult Index()
         {
             IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category");
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            if (claim != null)
+            {
+                var cartCount = _unitOfWork.ShoppingCart.GetAll(u => u.UserID == claim.Value).Count();
+                HttpContext.Session.SetInt32(SD.SessionShoppingCart, cartCount);
+            }
+            else
+            {
+                HttpContext.Session.SetInt32(SD.SessionShoppingCart, 0);
+            }
+
             return View(productList);
         }
         [HttpGet]
@@ -49,12 +62,15 @@ namespace MyProject.Areas.Customer.Controllers
             {
                 cartFromDb.Count += cart.Count;
                 _unitOfWork.ShoppingCart.Update(cartFromDb);
+                _unitOfWork.Save();
             }
             else
             {
                 _unitOfWork.ShoppingCart.Add(cart);
+                _unitOfWork.Save();
+                var cartCount = _unitOfWork.ShoppingCart.GetAll(u => u.UserID == userId).Count();
+                HttpContext.Session.SetInt32(SD.SessionShoppingCart, cartCount);
             }
-            _unitOfWork.Save();
 
             TempData["update"] = "Cart updated successfuly!";
             return RedirectToAction("Index");

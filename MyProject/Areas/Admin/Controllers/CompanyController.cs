@@ -1,11 +1,13 @@
 ﻿using DataAccess.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Utility;
 
 namespace MyProject.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[Authorize(Roles = SD.Role_Admin)]
+    [Authorize(Roles = SD.Role_Admin)]
     public class CompanyController : Controller
     {
         private readonly IUnitOfWork _unitofwork;

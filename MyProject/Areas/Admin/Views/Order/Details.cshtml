@@ -239,7 +239,7 @@
                                     Model.orderHeader.PaymentStatus != SD.StatusCancelled && 
                                     Model.orderHeader.PaymentStatus != SD.StatusShipped)
                                 {
-                                    <button type="submit" class="btn btn-danger form-control my-1"  >Cancel Order</button>
+                                    <button type="submit" asp-action="CancelOrder" class="btn btn-danger form-control my-1"  >Cancel Order</button>
                                 }
                             }
                         </div>

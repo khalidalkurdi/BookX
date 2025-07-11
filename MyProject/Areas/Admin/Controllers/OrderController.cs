@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Models;
 using Models.ViewModels;
 using MyProject.Models;
+using Stripe;
+using Stripe.Checkout;
+using Stripe.Climate;
 using System.Diagnostics;
 using System.Security.Claims;
 using Utility;
@@ -28,12 +31,12 @@ namespace MyProject.Areas.Admin.Controllers
             
             return View();
         } 
-        public IActionResult Details(int orderId)
+        public IActionResult Details(int orderHeaderId)
         {
             orderVM = new OrderVM
             {
-                orderHeader = _unitofwork.OrderHeader.Get(x=>x.Id==orderId,includeProperties: "user"),
-                orderDetail = _unitofwork.OrderDetail.GetAll(x => x.OrderHeaderId == orderId,includeProperties:"product" )
+                orderHeader = _unitofwork.OrderHeader.Get(x=>x.Id==orderHeaderId,includeProperties: "user"),
+                orderDetail = _unitofwork.OrderDetail.GetAll(x => x.OrderHeaderId == orderHeaderId,includeProperties:"product" )
             };
             return View(orderVM);
         }
@@ -61,7 +64,7 @@ namespace MyProject.Areas.Admin.Controllers
             _unitofwork.Save();
             TempData["success"] = "Order details Updated successfuly!";
 
-            return RedirectToAction(nameof(Details), new {orderId=orderVM.orderHeader.Id});
+            return RedirectToAction(nameof(Details), new { orderHeaderId = orderVM.orderHeader.Id});
         }
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin + " ," + SD.Role_Employee)]
@@ -70,7 +73,7 @@ namespace MyProject.Areas.Admin.Controllers
             _unitofwork.OrderHeader.UpdateStatus(orderVM.orderHeader.Id, SD.StatusInProcess);
             _unitofwork.Save();
             TempData["success"] = "Order details Updated successfuly!";
-            return RedirectToAction(nameof(Details), new { orderId=orderVM.orderHeader.Id});
+            return RedirectToAction(nameof(Details), new { orderHeaderId = orderVM.orderHeader.Id});
         }
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin + " ," + SD.Role_Employee)]
@@ -89,7 +92,91 @@ namespace MyProject.Areas.Admin.Controllers
             _unitofwork.OrderHeader.Update(orderVM.orderHeader);
             _unitofwork.Save();
             TempData["success"] = "Order details Updated successfuly!";
-            return RedirectToAction(nameof(Details), new { orderId=orderVM.orderHeader.Id});
+            return RedirectToAction(nameof(Details), new { orderHeaderId = orderVM.orderHeader.Id});
+        }
+        [HttpPost]
+        [Authorize(Roles = SD.Role_Admin + " ," + SD.Role_Employee)]
+        public IActionResult CancelOrder()
+        {
+            var orderHeaderFromDb = _unitofwork.OrderHeader.Get(u=>u.Id==orderVM.orderHeader.Id);
+            if (orderHeaderFromDb.OrderStatus == SD.StatusApproved)
+            {
+                var options = new RefundCreateOptions()
+                {
+                    Reason=RefundReasons.RequestedByCustomer,
+                    PaymentIntent=orderHeaderFromDb.PaymentIntentId
+                };
+                var service = new RefundService();
+                Refund refund=service.Create(options);
+                _unitofwork.OrderHeader.UpdateStatus(orderHeaderFromDb.Id,SD.StatusCancelled,SD.StatusRefunded);
+            }
+            else
+            {
+                _unitofwork.OrderHeader.UpdateStatus(orderHeaderFromDb.Id, SD.StatusCancelled, SD.StatusCancelled);
+            }
+            _unitofwork.Save();
+
+            TempData["delete"] = "Order Canceled successfuly!";
+            return RedirectToAction(nameof(Details), new { orderHeaderId = orderVM.orderHeader.Id });
+        }
+        [HttpPost(nameof(Details))]
+        [Authorize(Roles = SD.Role_Admin + " ," + SD.Role_Employee)]
+        public IActionResult Details_PAY_NOW()
+        {
+            orderVM.orderHeader= _unitofwork.OrderHeader.Get(x => x.Id == orderVM.orderHeader.Id, includeProperties: "user");
+            orderVM.orderDetail= _unitofwork.OrderDetail.GetAll(x => x.OrderHeaderId == orderVM.orderHeader.Id, includeProperties: "product");
+
+            //payment Logic
+            var Domin = "https://localhost:7224";
+            var options = new Stripe.Checkout.SessionCreateOptions
+            {
+                SuccessUrl = Domin + $"/Admin/order/PaymentConfirmation?orderHeaderId={orderVM.orderHeader.Id}",
+                CancelUrl = Domin + $"/Admin/order/Details?orderHeaderId={orderVM.orderHeader.Id}",
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+            };
+            foreach (var cart in  orderVM.orderDetail)
+            {
+                var sessionLineItem = new SessionLineItemOptions()
+                {
+                    PriceData = new SessionLineItemPriceDataOptions()
+                    {
+                        UnitAmount = (long)cart.Price * 100,    // convert 20.75$ => 2075
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions()
+                        {
+                            Name = cart.product.Title
+                        }
+                    },
+                    Quantity = cart.Count
+                };
+                options.LineItems.Add(sessionLineItem);
+            }
+            var service = new SessionService();
+            Session session = service.Create(options);
+            _unitofwork.OrderHeader.UpdateStripePaymentId(orderVM.orderHeader.Id, session.Id, session.PaymentIntentId);
+            _unitofwork.Save();
+            Response.Headers.Add("Location", session.Url);
+            return new StatusCodeResult(303);
+        }
+        
+        [Authorize(Roles = SD.Role_Admin + " ," + SD.Role_Employee)]
+        public IActionResult PaymentConfirmation(int orderHeaderId)
+        {
+            orderVM.orderHeader = _unitofwork.OrderHeader.Get(x => x.Id == orderHeaderId);
+            if (orderVM.orderHeader.PaymentStatus == SD.PaymentStatusDelayedPayment)
+            {
+                var service = new SessionService();
+                Session session = service.Get(orderVM.orderHeader.SessionId);
+                if (session.PaymentStatus.ToLower() == "paid")
+                {
+
+                    _unitofwork.OrderHeader.UpdateStripePaymentId(orderVM.orderHeader.Id, session.Id, session.PaymentIntentId);
+                    _unitofwork.OrderHeader.UpdateStatus(orderVM.orderHeader.Id, orderVM.orderHeader.OrderStatus, SD.PaymentStatusApproved);
+                    _unitofwork.Save();
+                }                               
+            }
+            return View(orderHeaderId);
         }
         #region Api Call 
         [HttpGet]

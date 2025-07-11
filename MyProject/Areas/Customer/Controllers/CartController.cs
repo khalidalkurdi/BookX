@@ -152,7 +152,7 @@ namespace MyProject.Areas.Customer.Controllers
         public IActionResult OrderConfirmation(int orderHeaderId)
         {
             var orderHeadeFromDb = _unitOfWork.OrderHeader.Get(x => x.Id == orderHeaderId);
-            if (orderHeadeFromDb.PaymentStatus==SD.PaymentStatusDelayedPayment)
+            if (orderHeadeFromDb.PaymentStatus != SD.PaymentStatusDelayedPayment)
             {
                 var service = new SessionService();
                 Session session = service.Get(orderHeadeFromDb.SessionId);
@@ -166,6 +166,7 @@ namespace MyProject.Areas.Customer.Controllers
                 var cartsFromDb= _unitOfWork.ShoppingCart.GetAll(x=>x.UserID==orderHeadeFromDb.UserID).ToList();
                 _unitOfWork.ShoppingCart.RemoveRange(cartsFromDb);
                 _unitOfWork.Save();
+                HttpContext.Session.Clear();
             }
             return View(orderHeaderId);
         }
@@ -179,7 +180,7 @@ namespace MyProject.Areas.Customer.Controllers
         }
         public IActionResult minus(int Id)
         {
-            var cartFromDb =_unitOfWork.ShoppingCart.Get(c=>c.Id==Id);
+            var cartFromDb =_unitOfWork.ShoppingCart.Get(c=>c.Id==Id,traked: true);
             if (cartFromDb.Count > 1)
             {
                 cartFromDb.Count -= 1;
@@ -188,15 +189,20 @@ namespace MyProject.Areas.Customer.Controllers
             else
             {
                 _unitOfWork.ShoppingCart.Remove(cartFromDb);
+                var countCart = _unitOfWork.ShoppingCart.GetAll(u => u.UserID == cartFromDb.UserID).Count() - 1;
+                HttpContext.Session.SetInt32(SD.SessionShoppingCart, countCart);
             }
             _unitOfWork.Save();
             return RedirectToAction("Index");
         }
         public IActionResult remove(int Id)
         {
-            var cartFromDb =_unitOfWork.ShoppingCart.Get(c=>c.Id==Id);
+            var cartFromDb =_unitOfWork.ShoppingCart.Get(c=>c.Id==Id,traked:true);
             _unitOfWork.ShoppingCart.Remove(cartFromDb);
+            var countCart = _unitOfWork.ShoppingCart.GetAll(u => u.UserID == cartFromDb.UserID).Count()-1;
+            HttpContext.Session.SetInt32(SD.SessionShoppingCart, countCart);    
             _unitOfWork.Save();
+
             return RedirectToAction("Index");
         }
         private double GetPriceBasedOnQuantity(ShoppingCart Cart)

@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor httpContextAccessor
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -16,7 +18,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark text-light border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="Customer" asp-controller="Home" asp-action="Index">Book Store</a>
+                <a class="navbar-brand" asp-area="Customer" asp-controller="Home" asp-action="Index">BookX</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -29,7 +31,8 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="Admin" asp-controller="Order" asp-action="Index">Order Manage</a>
                         </li>
-                        @* @* @if(User.IsInRole(SD.Role_Admin)){ *@
+                            @if(User.IsInRole(SD.Role_Admin))
+                            {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Content Mangement
@@ -44,12 +47,15 @@
                                     <li>
                                         <a class="dropdown-item" asp-area="Admin" asp-controller="Company" asp-action="Index">Company</a>
                                     </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register" >Create User</a>
+                                    </li>
                                 </ul>
                             </li>
-                        @* } *@
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="Customer" asp-controller="Cart" asp-action="Index"><i class="bi bi-cart-check"></i> (0)</a>
-                        </li>
+                            }                        
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Customer" asp-controller="Cart" asp-action="Index">@await Component.InvokeAsync("ShoppingCart")  </a>
+                            </li>                        
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -58,11 +64,10 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3 mb-4">
-            <partial name="_Notifications" />
+            <partial name="_Notifications"/>
             @RenderBody()
         </main>
     </div>
-
     <footer class="border-top footer text-light bg-dark text-center">
         <div class="container">
             &copy; 2024 Khalid Al-Kurdi <i class="bi bi-balloon-heart"></i>

@@ -24,6 +24,22 @@ builder.Services.ConfigureApplicationCookie(options => {
     options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 });
 
+// create sision 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
+    options.Cookie.HttpOnly = true; // Make the session cookie HTTP only
+    options.Cookie.IsEssential = true; // Make the session cookie essential
+});
+//facebook configration
+builder.Services.AddAuthentication()
+    .AddFacebook(options =>
+    {
+        options.AppId = builder.Configuration["facebook:AppId"];
+        options.AppSecret = builder.Configuration["facebook:AppSecret"];        
+    });
+
 builder.Services.AddRazorPages();
 var app = builder.Build();
 
@@ -35,6 +51,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
@@ -44,6 +61,7 @@ StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey"
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseSession();
 app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
