@@ -7,7 +7,9 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models
-{       
+{    
+    /// <summary>
+    /// Represents an application user in the identity system.
     public class ApplicationUser : IdentityUser
     {
         [ForeignKey("company")]
@@ -19,6 +21,9 @@ namespace Models
         public string? Country { get; set; }
         public string? PostalCode { get; set; }
         [ValidateNever]       
-        public Company company { get; set; }
+        public Company? company { get; set; }
+        [NotMapped]
+        public string Role { get; set; }
+
     }
 }
