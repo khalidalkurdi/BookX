@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Models;
 
 
 namespace MyProject.Models
@@ -42,6 +43,8 @@ namespace MyProject.Models
         [ValidateNever]
         [DisplayName("Image")]
         public string ImageUrl { get; set; }
+        [ValidateNever]
+        public IEnumerable<ProductImage> Images{ get; set; }
 
     }
 }

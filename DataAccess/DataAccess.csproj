@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Modals\Models.csproj" />
+    <ProjectReference Include="..\Utility\Utility.csproj" />
   </ItemGroup>
 
 </Project>
