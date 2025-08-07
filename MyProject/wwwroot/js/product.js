@@ -7,14 +7,19 @@ $(document).ready(
 function loadDataTable() {
     dataTable = $('#tabledata').DataTable({
         ajax: {
-            url: '/Admin/Product/GetAll'
+            url: '/Admin/Product/GetAll',
+            dataSrc: "data"
+
         },
         columns: [
             { data: 'title', "width": "20%" },
             { data: 'isbn', "width": "15%" },
             { data: 'author', "width": "15%" },
             { data: 'listPrice', "width": "10%" },
-            { data: 'Category.name', "width": "15%" },
+            {
+                data: 'category.name',              
+                "width": "15%"
+            },
             {
                 data: 'id',
                 "render": function (data) {

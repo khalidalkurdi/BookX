@@ -13,24 +13,24 @@
             <div class="col-md-12">
                 <form class="row" method="post">                    
                     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                    <input asp-for="@Model.User.Id" hidden />
+                    <input asp-for="@Model.user.Id" hidden />
                     <div class="form-floating mb-3 col-md-12">
-                        <input asp-for="@Model.User.Name"  class="form-control" placeholder="e.g Khalid" disabled />
-                        <label asp-for="@Model.User.Name" class="ms-2 text-muted">Name</label>                        
+                        <input asp-for="@Model.user.Name"  class="form-control" placeholder="e.g Khalid" disabled />
+                        <label asp-for="@Model.user.Name" class="ms-2 text-muted">Name</label>                        
                     </div>                  
                     <div class="form-floating mb-3 col-md-12">
-                        <select id="Input_Role" asp-for="@Model.User.Role" asp-items="@Model.RoleLsit" class="form-select">
+                        <select id="Input_Role" asp-for="@Model.user.Role" asp-items="@Model.RoleLsit" class="form-select">
                             <option disabled selected>--Select Role--</option>
                         </select>
                     </div> 
                     @{
                         var companyVisable = "display:none;";
-                        if(Model.User.Role==SD.Role_Company){
+                        if(Model.user.Role==SD.Role_Company){
                             companyVisable = "display:block;";
                         }
                     }
                     <div class="form-floating mb-3 col-md-12">
-                        <select id="Input_CompanyId" asp-for="@Model.User.CompanyId" style="@companyVisable" asp-items="@Model.CompanyLsit" class="form-select">
+                        <select id="Input_CompanyId" asp-for="@Model.user.CompanyId" style="@companyVisable" asp-items="@Model.CompanyLsit" class="form-select">
                             <option disabled selected>--Select Company--</option>
                         </select>
                     </div>                                                                

@@ -12,7 +12,7 @@ namespace Models.ViewModels
     public class RoleManagmentVM
     {
         [BindProperty]
-        public ApplicationUser User { get; set; }               
+        public ApplicationUser user { get; set; }               
         public IEnumerable<SelectListItem> RoleLsit { get; set; }   
         public IEnumerable<SelectListItem> CompanyLsit { get; set; }   
 

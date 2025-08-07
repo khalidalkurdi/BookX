@@ -31,12 +31,12 @@ namespace MyProject.Areas.Admin.Controllers
             
             return View();
         } 
-        public IActionResult Details(int orderHeaderId)
+        public IActionResult Details(int orderId)
         {
             orderVM = new OrderVM
             {
-                orderHeader = _unitofwork.OrderHeader.Get(x=>x.Id==orderHeaderId,includeProperties: "user"),
-                orderDetail = _unitofwork.OrderDetail.GetAll(x => x.OrderHeaderId == orderHeaderId,includeProperties:"product" )
+                orderHeader = _unitofwork.OrderHeader.Get(x=>x.Id==orderId, includeProperties: "user"),
+                orderDetail = _unitofwork.OrderDetail.GetAll(x => x.OrderHeaderId == orderId, includeProperties:"product" ).ToList()
             };
             return View(orderVM);
         }

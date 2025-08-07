@@ -41,10 +41,8 @@ namespace MyProject.Models
         [ValidateNever]
         public Category Category { get; set; }
         [ValidateNever]
-        [DisplayName("Image")]
-        public string ImageUrl { get; set; }
-        [ValidateNever]
-        public IEnumerable<ProductImage> Images{ get; set; }
+        [DisplayName("Images")]
+        public List<ProductImage> ProductImages{ get; set; }
 
     }
 }

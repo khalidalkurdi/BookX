@@ -27,12 +27,14 @@ namespace MyProject.Areas.Customer.Controllers
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             
             ShoppingCartVM =new() { 
-                ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u=>u.UserID==userId,includeProperties: "product"),
+                ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u=>u.UserID==userId,includeProperties: "product").ToList(),
                 orderHeader=new OrderHeader()
             };
 
+            IEnumerable<ProductImage> productImages = _unitOfWork.ProductImage.GetAll().ToList();
             foreach (var cart in ShoppingCartVM.ShoppingCartList)
             {
+                cart.product.ProductImages = productImages.Where(p=>p.ProductId==cart.product.Id).ToList();
                 cart.CartPrice = GetPriceBasedOnQuantity(cart);
                 ShoppingCartVM.orderHeader.OrderTotal += (cart.Count * cart.CartPrice);
             }

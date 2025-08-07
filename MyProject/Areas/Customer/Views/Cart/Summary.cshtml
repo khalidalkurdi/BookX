@@ -93,11 +93,11 @@
 											<h6 class="my-0">@cart.product.Title</h6>
 											<small class="text-muted">Quantity: @cart.Count</small>
 										</div>
-										<span class="text-muted">@((cart.CartPrice * cart.Count).ToString()) </span>
+										<span class="text-muted"> @((cart.CartPrice * cart.Count).ToString("c")) </span>
 									</li>
 								}
-								<li class="list-group-item d-flex justify-content-between bg-light">
-									<small class="text-info">Total :@Model.orderHeader.OrderTotal.ToString("c") </small>
+								<li class="list-group-item d-flex bg-light">
+                                    <small class="text-info text-capitalize">Total :@Model.orderHeader.OrderTotal.ToString("c") </small>
 									
 								</li>
 							</ul>

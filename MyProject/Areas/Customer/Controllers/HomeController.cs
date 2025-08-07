@@ -6,7 +6,6 @@ using MyProject.Models;
 using System.Diagnostics;
 using System.Security.Claims;
 using Utility;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace MyProject.Areas.Customer.Controllers
 {
     [Area("Customer")]
@@ -23,7 +22,7 @@ namespace MyProject.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category");
+            List<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductImages").ToList();
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
             if (claim != null)
@@ -43,7 +42,7 @@ namespace MyProject.Areas.Customer.Controllers
         {
             var ShoppingCart = new ShoppingCart
             {
-                product=_unitOfWork.Product.Get(p=>p.Id==producdId,"Category"),
+                product=_unitOfWork.Product.Get(p=>p.Id==producdId, includeProperties: "Category,ProductImages"),
                 ProductId=producdId
 
             };
