@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccess.Repository
+namespace DataAccess.InterfacesRepository
 {
-    public interface ICategoryRepository :IRepository<Category>
+    public interface IProductRepository : IRepository<Product>
     {
-      
-        void Update(Category entity);
+        void Update(Product product);
     }
 }

@@ -1,5 +1,6 @@
 ﻿
 using DataAccess.Db;
+using DataAccess.InterfacesRepository;
 using MyProject.Models;
 using System;
 using System.Collections.Generic;
@@ -29,10 +30,8 @@ namespace DataAccess.Repository
             productfromdb.Price50 = product.Price50;
             productfromdb.Price100 = product.Price100;
             productfromdb.CategoryId = product.CategoryId;
-            if(product.ImageUrl!=null) 
-            {
-                productfromdb.ImageUrl = product.ImageUrl;
-            }
+            productfromdb.ProductImages = product.ProductImages;
+            
            
         }
     }

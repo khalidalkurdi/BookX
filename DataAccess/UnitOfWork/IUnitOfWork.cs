@@ -1,4 +1,4 @@
-﻿using DataAccess.Repository;
+﻿using DataAccess.InterfacesRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +10,7 @@ namespace DataAccess.UnitOfWork
     public interface IUnitOfWork
     {
         IProductRepository Product { get; }
+        IProductImageRepository ProductImage { get; }
         ICategoryRepository Category { get; }
         ICompanyRepository Company { get; }
         IShoppingCartRepository ShoppingCart { get; }

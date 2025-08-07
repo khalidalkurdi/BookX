@@ -1,4 +1,5 @@
 ﻿using DataAccess.Db;
+using DataAccess.InterfacesRepository;
 using DataAccess.Repository;
 using MyProject.Models;
 using System;
@@ -15,6 +16,7 @@ namespace DataAccess.UnitOfWork
         public ICategoryRepository Category {  get; private set; }
 
         public IProductRepository Product {  get; private set; }
+        public IProductImageRepository ProductImage {  get; private set; }
 
         public ICompanyRepository Company { get; private set; }
 
@@ -30,6 +32,7 @@ namespace DataAccess.UnitOfWork
             _db=db;
             Category = new CategoryRepository(db);
             Product = new ProductRepository(db);
+            ProductImage = new ProductImageRepository(db);
             Company = new CompanyRepository(db);
             ShoppingCart = new ShoppingCartRepository(db);
             ApplicationUser = new ApplicationUserRepository(db);

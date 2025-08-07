@@ -7,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccess.Repository
+namespace DataAccess.InterfacesRepository
 {
-    public interface IOrderHeaderRepository :IRepository<OrderHeader>
+    public interface IOrderHeaderRepository : IRepository<OrderHeader>
     {
-      
+
         void Update(OrderHeader entity);
-        void UpdateStatus(int id, string orderStatus, string? paymentStatus=null);
+        void UpdateStatus(int id, string orderStatus, string? paymentStatus = null);
         void UpdateStripePaymentId(int id, string sessionId, string pamentIntentId);
 
     }

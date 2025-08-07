@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccess.Repository
+namespace DataAccess.InterfacesRepository
 {
-    public interface IOrderDetailRepository :IRepository<OrderDetail>
+    public interface IApplicationUserRepository : IRepository<ApplicationUser>
     {
-      
-        void Update(OrderDetail entity);
+        void Update(ApplicationUser user);
+       
     }
 }
